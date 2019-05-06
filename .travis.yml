@@ -3,17 +3,17 @@ language: java
 jdk: openjdk8
 cache:
   directories:
-  - $HOME/.m2/repository
-  - $HOME/.cache/pip
-  - $HOME/miniconda3
+  - "$HOME/.m2/repository"
+  - "$HOME/.cache/pip"
+  - "$HOME/miniconda3"
 branches:
   only:
   - master
   - development
-  - /^[vV]?\d+\.\d+\.\d+$/
+  - "/^[vV]?\\d+\\.\\d+\\.\\d+$/"
 before_install: unset _JAVA_OPTIONS
 install:
-- $HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh
+- "$HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh"
 before_script: if [ "$VAADIN_CHARTS_LICENSE_CODE" != "" ]; then echo "$VAADIN_CHARTS_LICENSE_CODE"
   > ~/.vaadin.charts.developer.license; fi;
 script: mvn --quiet --activate-profiles !development-build,!release-build --settings
@@ -52,8 +52,8 @@ notifications:
     on_success: never
     on_failure: always
     rooms:
-    - secure: '***'
+    - secure: "***"
 env:
   global:
-  - secure: ntbV8S37+p5U5O0GCcOH5bnnz4CdBbNvt/Tq8gQntMcyoGansN38DCpzzGmC8ztokrdayKm8NqMUy0PxMwqfYlO14j7L3Kr1+G6pCV/Da4/vwFf57F98nEgBn77ILQr7/2/i4NFmR7Ug2MoFN0rXp8ut4xSe/055eK8s3A1k46WLcxBSpeThXb8TaWZAA079ACEyoIpIQlBUi7nmklqoQQicPT8PNwp9gUO7ILI4zv6URXkb5Dby9B++/0ayz3xdYuIQxZXZEytbDeIUMgdCQbFKPLF2lfuMP2n3qA06BaTw+Tb2lm2VVULe3BiZfmdeHl68pvhVAu/M5QiM3ItfDEyTcOHoVivSYWS0tnd9b/c3AHdGP1Y6YTsbpZw7I3BKouar48gYBCR6vghasWmGuDJYKulMcMjF8lUssa9ZFfoJAciPVljirKhAcy7X4TZw8doGSaQjuwFqSyGvDFaMXswSKyo9sprIkD9cV77QuhwUu4usju0w0jB8/FtE8RjQpuCC3jy42isnqEbefqoDP51HWTmzIYvDWox2BEfoUn/sIiPiTzFsXM+rhOxLqdBCaS0iTmqXP7+aQ3L6mpmCjaJ33ZE+1msmi2+2CiUvRHDQq+ipy27zwzLvhdfqG9a6xdnxdkUIHkUOP+A29jgPcQ8u5NxVwvh0QWAKnlkeWE4=
-  - secure: vDroemumZ8Ttrgu4gRqj77mIII3D2W9NQ0sOTuOyLE0wLZxxazYJy4Zx7G8ng4XuT0OzZYxcKAQRANwPMB6H0Y9OzllFBMZiP23I1/UnCuuqE2G33eWArBvVtSFEUUa4qq2ma6BvTWwBqzAAmCvIdw93JUcwRJbGZlr49CkKN+Qya6i2mLN2TwAjAiul+kYbLbnaRpR9n0fYs73RP0XiEjKljGFl7d2TKZXYXGL4Ki/rr+u0K6Zp474qeXwmYughm+0GgwOVb2s96tZLQ+jomeWwiPcKE6EWJc404cTG9x+ns8uFjewicefWX2G3p186sm2xCBUuLfRnPgBS2aQ6I1lnfcZI6uBGjybRPtgt7P2i+PLs3YpCv2Naes+y0WOaDYIMS+uWGRutXZ3hTyOj6/8Gf+PtrNIfrjYVDd8uAHJABokmyWuYxyI4Wbo/cjJsHjtNp5kW7bPYHEhWpuSOmncDPrGGQwOdxNoe8k3O/4maeR9Pq3+PUntS9d1VsXxG3ykPgiBneCNL2fLLH+zdQjc+PKjMx7cpftNB+NTFJ8t5wiLW6Fle/ldqDoZes0rnMHmPpUElQR8u/BQ5Cp0+wuYaFhMhyjRTy9jlyTa6omXZuGJOTWCjsKdJPpKYAXn5dcqTdnBDjoRY82wbV4wcG1wQRxIiD9SdbiWWmfjfv2A=
+  - secure: MgdsQH+fj6DqKY7RKVSdChACiwrR0yaf23oYqO+v6rA6pY74FxI9JU7FEH8t2qufPggyMw6C+M5g3CKkTjQANrWMNKP4IFFQF/vev2BWMwQwcEjLaowHoXz948yPErtiHehC+Sv5S+TjsMd/A+Yl9OJQqYoNkCPTDRpplmdfJH6eB/bYeGWFF9kWzMRSH33OPQX0vRptSPlapVLwNGIGRfaepX43IppX9ThYi45k9CzDutnHhuIIi8sDlQ/XELYZg4A08blo+eGHYoIG6axGah4rahEmUH6VFUXBjl7+35y2WJVhfqyhF/lQIB9glIvQrYdiOdkceNVYa02iZk7L5KdmVo9uLWlKRrfFfWEIn3qZ41d3djTnPy89FU3qCEeTc4sqNU+dRJRwHvu3BBBqGdUbp6Y5pKajXHDsw/jI33oNZwWb9Av6yt1QVVSURNDxVltRNQa1BRJOGhy8//aiJRMWYyV3X2L6W4/bDZ+eZg9IP6j2fZiFGU+YBmu80fZCgGCXMzKiGrc8LmaZP8QfjDytveKww5+egipjEzKh1UGlmT1pZ5NF607IUq1GhdaR3tG3O3qkN0yxfQTjgmerc8I633XTB99HE7xW6azJCpbsfyj1Ak16tXM/0SKL1PnIoI+VGNl0MRMa6bQESa1qZ4NKprXbdHt6fGWLdGIXH+s=
+  - secure: tBbkoDku3J1HB2NVn8szrSqHGPejxq5tPScY88bangHlOS/rMpm/a9CsiUpc4U1HN1oiAaEehm6jvR++brrQrrhcnk8FLwBSXvsw4aQGx8sE8XXzqg9AFkDKdTsK1QiE9YguFjhx8G6Mq7gsOstefCxYjmRMbY5ya4uj91siTftCo5qXfTiHIjCAzoVE/UaHti6yRvCUcxD88PozGkJZ93Lg01qnAycoGMtW7+VmGCBADWv9ktgvdj2fvSP9ypf6EdGbtrjWykJdYG6PNfItBHQ2gvNP99OkoUgppG4czMGM+h1wH7tCsbP3lBJBTIm9yd3DDNQNegRPOnCmYWZ75X3Bbet2IUjXzyIdPQ8IdWycxKOpvla62/iqZZIf3/WHv06DyPC0c1JblAUTkG+MaNJE2WsWeYPygYeX/PAq1dzVnTGX2f2oGaZvC4w3Z993WTvzLdYD/Td8MdjgrGwIHcAly4/utYQpIVrMDGqJWQ01FHAlyNngHeqjkQKMUuTBVosIj4S3QIHYfsQ1NBjTw4QOke2IJGt0hik4ikEKy4ExWZ8sT2mE+YG5mx96G3tI4NdK0TvmHJOmuNhtCGQacW1uzcbQbC56xb6TGRNvvoBcP1DNJhP6lFNFwL6gmBDNL+RWNVB6/U9+YUSHCY5SL2TRCINo5PAJAvXzpYL5Kqc=
