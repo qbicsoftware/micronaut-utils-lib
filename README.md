@@ -2,15 +2,14 @@
 
 [![Build Status](https://travis-ci.com/qbicsoftware/micronaut-utils-lib.svg?branch=development)](https://travis-ci.com/qbicsoftware/micronaut-utils-lib)[![codecov](https://codecov.io/gh/qbicsoftware/micronaut-utils-lib/branch/master/graph/badge.svg)](https://codecov.io/gh/qbicsoftware/micronaut-utils-lib)
 
-micronaut-utils-lib, version 1.0.0-SNAPSHOT - Encapsulation of third party classes that need to be used at QBiC's service environment, using micronaut ([micronaut.io](https://micronaut.io)).
+micronaut-utils-lib, version 1.0.0-SNAPSHOT - _Encapsulation of third party classes that need to be used in the QBiC service environment, using Micronaut ([micronaut.io](https://micronaut.io))_.
 
 ## Author
 Created by Sven Fillinger (sven.fillinger@qbic.uni-tuebingen.de).
 
 ## Description
 
-
-
+A small collection of classes, that are shared between projects that make use of the Micronaut framework.
 
 ## How to Install
 
