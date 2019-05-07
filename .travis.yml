@@ -10,7 +10,7 @@ branches:
   only:
   - master
   - development
-  - "/^[vV]?\\d+\\.\\d+\\.\\d+$/"
+  - /^[vV]?\\d+\\.\\d+\\.\\d+$/
 before_install: unset _JAVA_OPTIONS
 install:
 - $HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh
@@ -21,26 +21,26 @@ script: mvn --quiet --activate-profiles !development-build,!release-build --sett
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 deploy:
-  - skip_cleanup: true
-    provider: script
-    script: mvn --quiet --activate-profiles development-build,!release-build --settings
-      .travis.settings.xml deploy -DskipITs
-    on:
-      branch: development
-      condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-  - skip_cleanup: true
-    provider: script
-    script: mvn --quiet --activate-profiles !development-build,release-build --settings
-      .travis.settings.xml deploy -DskipITs
-    on:
-      condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-      tags: true
+- skip_cleanup: true
+  provider: script
+  script: mvn --quiet --activate-profiles development-build,!release-build --settings
+    .travis.settings.xml deploy -DskipITs
+  on:
+    branch: development
+    condition: '"$TRAVIS_EVENT_TYPE" = "push"'
+- skip_cleanup: true
+  provider: script
+  script: mvn --quiet --activate-profiles !development-build,release-build --settings
+    .travis.settings.xml deploy -DskipITs
+  on:
+    condition: '"$TRAVIS_EVENT_TYPE" = "push"'
+    tags: true
 after_deploy:
-  - echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
+- echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
   && conda activate qbic-docs-build
-  - mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
+- mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
   site
-  - ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
+- ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
   "This commit was performed from travis-ci.com using a personal access key" "Build
   ID $TRAVIS_BUILD_ID" "Job ID TRAVIS_JOB_ID" "Branch $TRAVIS_BRANCH" "Log of this
   build found at $TRAVIS_JOB_WEB_URL"
@@ -52,7 +52,7 @@ notifications:
     on_success: never
     on_failure: always
     rooms:
-    - secure: '***'
+      - secure: "***"
 env:
   global:
   - secure: CR/NyZRLZkP0PhFJzyrZd8XJWAXITFka6soiozl5ANY+TPvOoSR379RSdwbiWOsFQKZbsIPczhmJjBrAKuooGlFzaPv337UhM95OT69WYCuLv5XVH5gUkD8vWxRfUK/BOOCqVhGJ/LUJ+MA6GqwvDDmsxJ9C8gUtHgmt/6b46Ud8zZ8uCVFZ71SZuxNOl1z0CaFJ5G7AxImVPE9cS5JHPmN9cKels4UJRRVw/1VDmkrXx4MAQF3z5Hdp0/k3y5qZ5rpCjw4hlWL81oFeqgafIfTjaIoJqOKUmDqtdsN3yh2YKoWEjfyNHBE0GKBSvLShZfgkrYZhUcS0w4JkOVCoecacRTzCQLj+cuKVBxehRiWkbZpqdcGr0dyifq/ZcKOeMFZnQsInU9Q6H1rw1X3qcEix/4qegRitGzS9PdY/fkOZtqFvcCAn1ox92YLtF7hz877evr8Q7w9bjX6He0uDTLljZ5Eew0wIxIVUkCwfVDNDihqC0gboGwl7Q1WtS/sCk2vtGsZEd+nyq/M6DilG2en0xLYXSAsL46GHOiNXg6StIdoEwSRsdw+jOp1gbAIKU+b/XEr1IyufCuj/AV9fxJJgd+Y+F80C+hb5/BWdjPKj7HDZekyEDP6tzjssisW6D8U6H+G8Yigcn9q5Z4irXtHj8YvVAjkCKGg0w6gfq24=
