@@ -19,9 +19,9 @@ under the License.
 -->
 <rss version="0.91">
   <channel>
-    <title>datasource - Checkstyle report</title>
+    <title>Micronaut utils - Checkstyle report</title>
     <link>http://github.com/qbicsoftware/datasource</link>
-    <description>datasource - Checkstyle report</description>
+    <description>Micronaut utils - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2019</copyright>
     <item>
