@@ -13,34 +13,34 @@ branches:
   - "/^[vV]?\\d+\\.\\d+\\.\\d+$/"
 before_install: unset _JAVA_OPTIONS
 install:
-- "$HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh"
+- $HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh
 before_script: if [ "$VAADIN_CHARTS_LICENSE_CODE" != "" ]; then echo "$VAADIN_CHARTS_LICENSE_CODE"
   > ~/.vaadin.charts.developer.license; fi;
 script: mvn --quiet --activate-profiles !development-build,!release-build --settings
   .travis.settings.xml clean cobertura:cobertura package
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
 deploy:
-- skip_cleanup: true
-  provider: script
-  script: mvn --quiet --activate-profiles development-build,!release-build --settings
-    .travis.settings.xml deploy -DskipITs
-  on:
-    branch: development
-    condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-- skip_cleanup: true
-  provider: script
-  script: mvn --quiet --activate-profiles !development-build,release-build --settings
-    .travis.settings.xml deploy -DskipITs
-  on:
-    condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-    tags: true
+  - skip_cleanup: true
+    provider: script
+    script: mvn --quiet --activate-profiles development-build,!release-build --settings
+      .travis.settings.xml deploy -DskipITs
+    on:
+      branch: development
+      condition: '"$TRAVIS_EVENT_TYPE" = "push"'
+  - skip_cleanup: true
+    provider: script
+    script: mvn --quiet --activate-profiles !development-build,release-build --settings
+      .travis.settings.xml deploy -DskipITs
+    on:
+      condition: '"$TRAVIS_EVENT_TYPE" = "push"'
+      tags: true
 after_deploy:
-- echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
+  - echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
   && conda activate qbic-docs-build
-- mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
+  - mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
   site
-- ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
+  - ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
   "This commit was performed from travis-ci.com using a personal access key" "Build
   ID $TRAVIS_BUILD_ID" "Job ID TRAVIS_JOB_ID" "Branch $TRAVIS_BRANCH" "Log of this
   build found at $TRAVIS_JOB_WEB_URL"
@@ -52,8 +52,10 @@ notifications:
     on_success: never
     on_failure: always
     rooms:
-    - secure: "***"
+    - secure: '***'
 env:
   global:
   - secure: CR/NyZRLZkP0PhFJzyrZd8XJWAXITFka6soiozl5ANY+TPvOoSR379RSdwbiWOsFQKZbsIPczhmJjBrAKuooGlFzaPv337UhM95OT69WYCuLv5XVH5gUkD8vWxRfUK/BOOCqVhGJ/LUJ+MA6GqwvDDmsxJ9C8gUtHgmt/6b46Ud8zZ8uCVFZ71SZuxNOl1z0CaFJ5G7AxImVPE9cS5JHPmN9cKels4UJRRVw/1VDmkrXx4MAQF3z5Hdp0/k3y5qZ5rpCjw4hlWL81oFeqgafIfTjaIoJqOKUmDqtdsN3yh2YKoWEjfyNHBE0GKBSvLShZfgkrYZhUcS0w4JkOVCoecacRTzCQLj+cuKVBxehRiWkbZpqdcGr0dyifq/ZcKOeMFZnQsInU9Q6H1rw1X3qcEix/4qegRitGzS9PdY/fkOZtqFvcCAn1ox92YLtF7hz877evr8Q7w9bjX6He0uDTLljZ5Eew0wIxIVUkCwfVDNDihqC0gboGwl7Q1WtS/sCk2vtGsZEd+nyq/M6DilG2en0xLYXSAsL46GHOiNXg6StIdoEwSRsdw+jOp1gbAIKU+b/XEr1IyufCuj/AV9fxJJgd+Y+F80C+hb5/BWdjPKj7HDZekyEDP6tzjssisW6D8U6H+G8Yigcn9q5Z4irXtHj8YvVAjkCKGg0w6gfq24=
   - secure: fX0GXqcDqd8ZtV11hOsQG4e3loa8ZeeambHje8YgP7nrXolTGSaVN/7vxHRBjIMMCAvvsWT+1u2hEZCemQHIfbSdhrBzPqGjuSWhy+HcdCfde++lb3ice6iB7SvyZ3O1YU4Hfv9Wb5r4q7gHC8bQtTd+eg97/afW3XEpxqizI4RtpkZYU4DCQno7VEU56ZvpbGgEsBbfaRd7qXNyJ+jWOQCQ25nmh5GnvjxyRug/s5wZgvMJyDZJKv8iB86gL3aXHXuN5oJ+iHv2m5JP/xEtuNwZIT+JJUfGHdIC1jn5PUZwucS/wnaymkO3QNhbE8tKsnbftHNM2+O6Q8iRpDr88O0dUgDaGLlsdtf9Y43bHiGMZqxuFmkIcFIwyn2n09+nUtEnLO4Ay1mrGg5naU7ojsi7iOCzXKFn08ZJUsUnnz7h1pp2G6vi2nBON4Po5JFAgI2RzPjPJpJNz2Mt7DO9U6ZsebOjLqsfjcGnhC/tER3L+aOpK+mNv4DWI84dAcOC921H5gdgyyy3UZUw4PM1XOgjDF74vC7mFQ+XzolQSUdr8MoRPk+D2rkVSEX+oEgVAPqFxkkHwPOGDwYqiR/1x/rs3zSyvIHyu31KYsQ+gKi1nZhYLx/StF8N8mnPm9wTRmBokyIN944RE4NQyZE+6mMTjG/cEjBjWH/Ef5OErXI=
+  - secure: dq/5U35e7FWimfXg+232E/CwIBBS8MIqB3Vt7xgMMu148cU4dPdxf4yI9ErYPTteMav6usjjRul0jmFyojDgc0LZ4iRTJfeHIMwogmULXEowyUMzHZGwArGHa+ZQ0QXJ3HK3PpGDrjQAaLnYEG0qOvfxS+sYx841RtohYCKb0tgqkeH5UXFbxtczfAXRYNjB2k6uKN6gTRDjLPbK0OzD8YnK0jDcCKEtV/WQCAcB3vf6s45xbHxf2eBF9rkUo8Z2/z7Vx+ZkakK4TyZ64XTJBWvmDp2TjE8ozcsmEpC5HRbZArud4kBD15oHFst3S12Wl3WFbsozTP6p4bZC58OJ5lhx9+CDpsbGS3WTNuEiLbzh1ecw8gN2veEv48Vr09z3VBDRMh3R1MjsrU1n9kiN9Z69dpr7RcdQPoWVPP9jaIQmvLDxXCFT/v6sSB4cBbZaocx/M4xaw4iDRt0uoVRPtGn8BkCqJHBK/dZ5BYPs0ntsCXOsP7Dx1YCiSnlsArv3gFXhFJKl9CsZzVQl1IKCQEPtz4jpeuXgpVUdZuMWzXQ2t4A5Wae0nFECZ48Wuecf0VwT4txQtTTbGNoxxBtc5mOnwvvqFfurlxPDzsqqOfw/resNKF5AkipFFnH5eGhOtiLCxUnNtcGe5ILoTPbZv5PhWjEyed4xBHXHVHWmPhE=
+  - secure: YQxcsNDhYcyi5nPC4Z6acbr0JVih3Wb++2ijxmcPPpbK6ncL25ndP6pAih1XoN+NggVbPhyKYfT5fnc10lXeT1Y5LJNQ64KgqUjL+D+bqRjNPldwsuh7w5AnQq6YBjSd9eZ31U32B0jg1RVo0FAznGFSqaRnb3a4YA2nlhpKnUJ8buP+86Gikg3tkAHg1R3QR6ahctlkSXvrxBmzMv6ixmzuSkp602E0lTSesNchZgC9KFvXz8PMoo3e3tIHWAFSCXcvdd1rl7XlDWR+TG7ubtjyykcI+eCEYzU8pTQxmOKQkc95ht8zL6u/Vsmo03z2hRsEvRO/3qFg89fMnXKQYBB2BfIwN6y3oWu9+MEArLFW5SikUexBpPlQJs1IAQuYYB3nGaZ4bKJ+kKDmn++KdyMefbxp6U8/1pqjbEbitaqlYUYq/D7w5cUOE1dxZeZVXB0kUZJVPeBAUE0+iLaNHpnE/3oRVes9sv6ij0tpNsuBdy48JwZo8julm+VDobtOKeZkpP4xxp6zh2F0Hk8L58cWkalJBt9knzX2MMQFooCIcOehwgZSNMiALgEQVBE/08VMcPJdeNDPBRh8fHZQMlsdlO4c/u+s4bkJt8GOAPq0frvaTN6C5x4sPv8KMNcFWx7EzhSIPGkJxkcK7C7dozXriOexZ4yMvjvP4SibvB0=
