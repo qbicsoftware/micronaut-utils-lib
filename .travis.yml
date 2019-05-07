@@ -1,83 +1,59 @@
-# Build script for Travis CI
-#
-
-# use xenial distribution
 dist: xenial
-
-# no need to check for oracle's java
 language: java
 jdk: openjdk8
-
-
-# speed up builds by caching maven local repository
-# we are also using python via conda/pip
 cache:
   directories:
   - "$HOME/.m2/repository"
   - "$HOME/.cache/pip"
   - "$HOME/miniconda3"
-
-# as agreed in our SOP
 branches:
   only:
   - master
   - development
-  # Travis treats pushed tags as branches
-  - /^[vV]?\d+\.\d+\.\d+$/ # matches e.g., v1.2.3, 1.2.3, V1.2.3
-
-# added to make logs look cleaner, crisper, certified fresh
-before_install: unset _JAVA_OPTIONS 
-
-# dependencies for report generation (use cache to speed up builds)
-install: 
-  - $HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh
-
-# check if we need to add a license file for Vaadin charts
-before_script: if [ "$VAADIN_CHARTS_LICENSE_CODE" != "" ]; then
-                  echo "$VAADIN_CHARTS_LICENSE_CODE" > ~/.vaadin.charts.developer.license;
-               fi;
-
-# as agreed in our SOP, build everything (don't deploy, just try to 'mvn package' locally, which covers unit tests)
-script: mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml clean cobertura:cobertura package
-# upload code coverage report, generate maven site (javadocs, documentation, static code analysis, etc.)
-after_success: 
+  - "/^[vV]?\\d+\\.\\d+\\.\\d+$/"
+before_install: unset _JAVA_OPTIONS
+install:
+- "$HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh"
+before_script: if [ "$VAADIN_CHARTS_LICENSE_CODE" != "" ]; then echo "$VAADIN_CHARTS_LICENSE_CODE"
+  > ~/.vaadin.charts.developer.license; fi;
+script: mvn --quiet --activate-profiles !development-build,!release-build --settings
+  .travis.settings.xml clean cobertura:cobertura package
+after_success:
 - bash <(curl -s https://codecov.io/bash)
-
-# upload to maven
 deploy:
-  # as agreed in our SOP, builds on development branch will deploy to our maven repository after validating
-  # the artifact has a proper SNAPSHOT version
-  # make sure to skip integration tests! (using -DskipITs)
 - skip_cleanup: true
   provider: script
-  script: mvn --quiet --activate-profiles development-build,!release-build --settings .travis.settings.xml deploy -DskipITs
+  script: mvn --quiet --activate-profiles development-build,!release-build --settings
+    .travis.settings.xml deploy -DskipITs
   on:
     branch: development
     condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-  # as agreed in our SOP, releases are performed by tagging commits,
-  # the version string and version of dependencies are validated (no snapshots allowed)
 - skip_cleanup: true
   provider: script
-  script: mvn --quiet --activate-profiles !development-build,release-build --settings .travis.settings.xml deploy -DskipITs
+  script: mvn --quiet --activate-profiles !development-build,release-build --settings
+    .travis.settings.xml deploy -DskipITs
   on:
     condition: '"$TRAVIS_EVENT_TYPE" = "push"'
     tags: true
-
-# activate our conda environment, generate maven site and upload reports to gh-pages branch
-after_deploy:   
-  - echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc && conda activate qbic-docs-build
-  - mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml site 
-  - ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages" "This commit was performed from travis-ci.com using a personal access key" "Build ID $TRAVIS_BUILD_ID" "Job ID TRAVIS_JOB_ID" "Branch $TRAVIS_BRANCH" "Log of this build found at $TRAVIS_JOB_WEB_URL"
-
-# change according to your needs, but we recommend to deactivate email notifications
-# for now, we configured Travis to send a notification to the #travis-ci Slack channel 
+after_deploy:
+- echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
+  && conda activate qbic-docs-build
+- mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
+  site
+- ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
+  "This commit was performed from travis-ci.com using a personal access key" "Build
+  ID $TRAVIS_BUILD_ID" "Job ID TRAVIS_JOB_ID" "Branch $TRAVIS_BRANCH" "Log of this
+  build found at $TRAVIS_JOB_WEB_URL"
 notifications:
   email:
     on_success: never
     on_failure: never
-  slack: 
+  slack:
     on_success: never
     on_failure: always
-    # edit the following section if you want to get slack notifications
     rooms:
-      - secure: "***"
+    - secure: "***"
+env:
+  global:
+  - secure: CR/NyZRLZkP0PhFJzyrZd8XJWAXITFka6soiozl5ANY+TPvOoSR379RSdwbiWOsFQKZbsIPczhmJjBrAKuooGlFzaPv337UhM95OT69WYCuLv5XVH5gUkD8vWxRfUK/BOOCqVhGJ/LUJ+MA6GqwvDDmsxJ9C8gUtHgmt/6b46Ud8zZ8uCVFZ71SZuxNOl1z0CaFJ5G7AxImVPE9cS5JHPmN9cKels4UJRRVw/1VDmkrXx4MAQF3z5Hdp0/k3y5qZ5rpCjw4hlWL81oFeqgafIfTjaIoJqOKUmDqtdsN3yh2YKoWEjfyNHBE0GKBSvLShZfgkrYZhUcS0w4JkOVCoecacRTzCQLj+cuKVBxehRiWkbZpqdcGr0dyifq/ZcKOeMFZnQsInU9Q6H1rw1X3qcEix/4qegRitGzS9PdY/fkOZtqFvcCAn1ox92YLtF7hz877evr8Q7w9bjX6He0uDTLljZ5Eew0wIxIVUkCwfVDNDihqC0gboGwl7Q1WtS/sCk2vtGsZEd+nyq/M6DilG2en0xLYXSAsL46GHOiNXg6StIdoEwSRsdw+jOp1gbAIKU+b/XEr1IyufCuj/AV9fxJJgd+Y+F80C+hb5/BWdjPKj7HDZekyEDP6tzjssisW6D8U6H+G8Yigcn9q5Z4irXtHj8YvVAjkCKGg0w6gfq24=
+  - secure: fX0GXqcDqd8ZtV11hOsQG4e3loa8ZeeambHje8YgP7nrXolTGSaVN/7vxHRBjIMMCAvvsWT+1u2hEZCemQHIfbSdhrBzPqGjuSWhy+HcdCfde++lb3ice6iB7SvyZ3O1YU4Hfv9Wb5r4q7gHC8bQtTd+eg97/afW3XEpxqizI4RtpkZYU4DCQno7VEU56ZvpbGgEsBbfaRd7qXNyJ+jWOQCQ25nmh5GnvjxyRug/s5wZgvMJyDZJKv8iB86gL3aXHXuN5oJ+iHv2m5JP/xEtuNwZIT+JJUfGHdIC1jn5PUZwucS/wnaymkO3QNhbE8tKsnbftHNM2+O6Q8iRpDr88O0dUgDaGLlsdtf9Y43bHiGMZqxuFmkIcFIwyn2n09+nUtEnLO4Ay1mrGg5naU7ojsi7iOCzXKFn08ZJUsUnnz7h1pp2G6vi2nBON4Po5JFAgI2RzPjPJpJNz2Mt7DO9U6ZsebOjLqsfjcGnhC/tER3L+aOpK+mNv4DWI84dAcOC921H5gdgyyy3UZUw4PM1XOgjDF74vC7mFQ+XzolQSUdr8MoRPk+D2rkVSEX+oEgVAPqFxkkHwPOGDwYqiR/1x/rs3zSyvIHyu31KYsQ+gKi1nZhYLx/StF8N8mnPm9wTRmBokyIN944RE4NQyZE+6mMTjG/cEjBjWH/Ef5OErXI=
