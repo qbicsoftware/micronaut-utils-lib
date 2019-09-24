@@ -10,7 +10,7 @@ branches:
   only:
   - master
   - development
-  - /^[vV]?\\d+\\.\\d+\\.\\d+$/
+  - /^[vV]?\d+\.\d+\.\d+$/
 before_install: unset _JAVA_OPTIONS
 install:
 - $HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh
