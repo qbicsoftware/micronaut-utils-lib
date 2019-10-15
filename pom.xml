@@ -9,7 +9,7 @@
 		<version>1.6.0</version>
 	</parent>
 	<artifactId>micronaut-utils-lib</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
 	<name>Micronaut utils</name>
 	<url>http://github.com/qbicsoftware/datasource</url>
 	<description>Encapsulation of Java's datasource class</description>
