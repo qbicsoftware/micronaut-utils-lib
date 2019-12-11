@@ -3,6 +3,7 @@ package life.qbic.micronaututils.auth
 import groovy.util.logging.Log4j2
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
+import io.micronaut.context.annotation.Requires
 import io.micronaut.security.authentication.AuthenticationException
 import io.micronaut.security.authentication.AuthenticationFailed
 import io.micronaut.security.authentication.AuthenticationProvider
@@ -17,6 +18,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Log4j2
+@Requires(beans = ApplicationContext.class)
 @Singleton
 class Authentication implements AuthenticationProvider{
 
