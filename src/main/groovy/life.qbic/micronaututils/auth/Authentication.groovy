@@ -1,6 +1,7 @@
 package life.qbic.micronaututils.auth
 
 import groovy.util.logging.Log4j2
+import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
 import io.micronaut.security.authentication.AuthenticationException
 import io.micronaut.security.authentication.AuthenticationFailed
@@ -12,6 +13,7 @@ import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import org.yaml.snakeyaml.Yaml
 
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Log4j2
@@ -20,12 +22,21 @@ class Authentication implements AuthenticationProvider{
 
     private final Map config
 
-    Authentication(@Property(name="userroles.config") String config) {
-        this.config = new Yaml().load(new File(config).text)
+    @Inject
+    private final ApplicationContext context
+
+    Authentication() {
+        String configPath = this.context.getEnvironment().getProperty("userroles.config", String.class) ?: ""
+        if (!configPath.isEmpty()) {
+            this.config = new Yaml().load(new File(configPath).text)
+        }
     }
 
     @Override
     Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
+        if (!this.config) {
+            return Flowable.just(new AuthenticationFailed())
+        }
         try {
             UserDetails userDetails = tryToAuthenticate(authenticationRequest)
             log.info("Sucessfull authentication by user '${authenticationRequest.identity}'.")
