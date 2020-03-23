@@ -29,7 +29,9 @@ class Authentication implements AuthenticationProvider{
 
     Authentication() {
         String configPath = this.context.getEnvironment().getProperty("userroles.config", String.class) ?: ""
-        if (!configPath.isEmpty()) {
+        if (configPath.isEmpty()) {
+            throw new IllegalStateException("The user role configuration path must be set in the application configuration file.")
+        } else {
             this.config = new Yaml().load(new File(configPath).text)
         }
     }
